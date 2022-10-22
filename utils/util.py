@@ -5,6 +5,8 @@ import sys
 import inspect
 import heapq
 import random
+import signal
+import time
 
 
 class FixedRandom:
@@ -110,10 +112,12 @@ class Stack:
     def __init__(self):
         self.list = []
 
+    # Task 2
     def count(self):
         "Count the number of elements in the stack"
         return len(self.list)
 
+    # Task 2
     def isExists(self, item):
         return self.list.index(item) > -1
 
@@ -129,6 +133,7 @@ class Stack:
         "Pop the most recently pushed item from the stack"
         return self.list.pop()
 
+    # Task 2
     def peek(self):
         "Get the topmost element from the stack"
         if self.count() > 0:
@@ -136,6 +141,7 @@ class Stack:
         else:
             return None
 
+    # Task 2
     def sort_list(self, reverse=False):
         self.list.sort(reverse=reverse)
 
@@ -612,13 +618,10 @@ def pause():
 # code to handle timeouts
 #
 # FIXME
-# NOTE: TimeoutFuncton is NOT reentrant.  Later timeouts will silently
-# disable earlier timeouts.  Could be solved by maintaining a global list
-# of active time outs.  Currently, questions which have test cases calling
+# NOTE: TimeoutFuncton is NOT reentrant. Later timeouts will silently
+# disable earlier timeouts. Could be solved by maintaining a global list
+# of active time outs. Currently, questions which have test cases calling
 # this have all student code so wrapped.
-#
-import signal
-import time
 
 
 class TimeoutFunctionException(Exception):

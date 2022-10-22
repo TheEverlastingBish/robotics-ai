@@ -1,7 +1,10 @@
 ### Workshop 1 - Data Structures in Python
 import sys
+from tracemalloc import start
 sys.path.append('../../../')
 from utils import util
+import time
+from datetime import datetime, timedelta
 
 
 ## Stacks
@@ -93,24 +96,65 @@ def check_bracket_sequence(expr):
         return True
 
 
+
 ## Queues
 ### Task 4: Manipulating Queue
 def task4():
-    pass
+    q1 = util.Queue()
+
+    q1.push('a')
+    q1.push('b')
+    q1.push('c')
+    q1.pop()
+    q1.pop()
+    q1.push('d')
+    q1.push('e')
+    q1.pop()
+    q1.push('f')
+
+    print(q1.list)
+
+
+
+### Task 5: Additional Operations in Queues
+def task5():
+    q2 = util.Queue()
+
+    start_time = datetime.now()
+    print("{}: Starting...".format(start_time))
+    # time.sleep(4)
+    for i in range(100000):
+        q2.push(i)
+
+    finish_time = datetime.now()
+    print("{}: Finished.".format(finish_time))
+    print("Time taken: {:.5f}s.".format((finish_time - start_time).total_seconds()))
+    print("Queue Count: {:,}".format(len(q2.list)))
+
 
 
 # Ops
 if __name__ == '__main__':
 
-    menu = input("Menu:\n1. Task 1\n2. Task 2\n3. Task 3: Check Bracket Sequence\n$ ").strip()
+    menu = input("""#######  Menu ######\n
+    1. Task 1
+    2. Task 2
+    3. Task 3: Check Bracket Sequence
+    4. Task 4
+    5. Task 5
+    \nEnter selection: $ """).strip()
 
-    if menu == '1':
+    if   menu == '1':
         task1()
     elif menu == '2':
         task2()
     elif menu == '3':
         br_seq = input("Enter bracket sequence:\n$ ")
         print(check_bracket_sequence(br_seq))
+    elif menu == '4':
+        task4()
+    elif menu == '5':
+        task5()
     else:
-        print("Invalid selection.")
+        print("ERR: Invalid selection.")
 
