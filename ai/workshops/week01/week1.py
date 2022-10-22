@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 
 ## Stacks
-### Task 1: Manipulating a Stack
+### Task 1: Stack Operations
 def task1():
     s = util.Stack()
 
@@ -28,7 +28,7 @@ def task1():
 
 
 
-### Task 2: Custom Stack
+### Task 2: Custom Stack Operations
 def task2():
     s2 = util.Stack()
     s2.list = ['dog', 'cat', 'bird', 'porcupine', 'hedgehog', 'antelope', 'orca']
@@ -98,7 +98,7 @@ def check_bracket_sequence(expr):
 
 
 ## Queues
-### Task 4: Manipulating Queue
+### Task 4: Queue Operations
 def task4():
     q1 = util.Queue()
 
@@ -116,20 +116,42 @@ def task4():
 
 
 
-### Task 5: Additional Operations in Queues
+### Task 5: Additional Queue Operations
 def task5():
-    q2 = util.Queue()
+    q = util.Queue()
 
     start_time = datetime.now()
     print("{}: Starting...".format(start_time))
-    # time.sleep(4)
+
     for i in range(100000):
-        q2.push(i)
+        q.push(i)
 
     finish_time = datetime.now()
     print("{}: Finished.".format(finish_time))
     print("Time taken: {:.5f}s.".format((finish_time - start_time).total_seconds()))
-    print("Queue Count: {:,}".format(len(q2.list)))
+    print("Queue Count: {:,}".format(len(q.list)))
+    return q
+
+
+
+# Task 6: Reverse a Queue
+def reverse_queue(q):
+    qx = util.Queue()
+    qx = q
+    print("Original Queue - First element: {:,}, Last element: {:,}".format(q.list[0], q.list[-1]))
+    qx.reverse()
+    print("Reversed Queue - First element: {:,}, Last element: {:,}".format(q.list[0], q.list[-1]))
+    return qx
+
+
+# Task 7: Dictionary Operations
+def dictionary_ops():
+    pass
+
+
+# Task 8: Graphs
+def graph_ops():
+    pass
 
 
 
@@ -137,11 +159,14 @@ def task5():
 if __name__ == '__main__':
 
     menu = input("""#######  Menu ######\n
-    1. Task 1
-    2. Task 2
+    1. Task 1: Stack Operations
+    2. Task 2: Custom Stack Operations
     3. Task 3: Check Bracket Sequence
-    4. Task 4
-    5. Task 5
+    4. Task 4: Queue Operations
+    5. Task 5: Additional Queue Operations
+    6. Task 6: Reverse a Queue
+    7. Task 7: Dictionary Operations
+    8. Task 8: Graph Operations
     \nEnter selection: $ """).strip()
 
     if   menu == '1':
@@ -155,6 +180,12 @@ if __name__ == '__main__':
         task4()
     elif menu == '5':
         task5()
+    elif menu == '6':
+        reverse_queue(task5())
+    elif menu == '7':
+        dictionary_ops()
+    elif menu == '8':
+        graph_ops()
     else:
         print("ERR: Invalid selection.")
 

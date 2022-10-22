@@ -166,6 +166,10 @@ class Queue:
     def isEmpty(self):
         "Returns true if the queue is empty"
         return len(self.list) == 0
+    
+    def reverse(self):
+        return self.list.reverse()
+
 
 
 class PriorityQueue:
@@ -534,7 +538,7 @@ def flipCoin( p ):
 
 
 def chooseFromDistribution( distribution ):
-    "Takes either a counter or a list of (prob, key) pairs and samples"
+    """Takes either a counter or a list of (prob, key) pairs and samples"""
     if type(distribution) == dict or type(distribution) == Counter:
         return sample(distribution)
     r = random.random()
@@ -545,20 +549,16 @@ def chooseFromDistribution( distribution ):
 
 
 def nearestPoint( pos ):
-    """
-    Finds the nearest grid point to a position (discretizes).
-    """
-    ( current_row, current_col ) = pos
+    """Finds the nearest grid point to a position (discretizes)"""
+    (current_row, current_col) = pos
 
     grid_row = int( current_row + 0.5 )
     grid_col = int( current_col + 0.5 )
-    return ( grid_row, grid_col )
+    return (grid_row, grid_col)
 
 
 def sign( x ):
-    """
-    Returns 1 or -1 depending on the sign of x
-    """
+    """Returns 1 or -1 depending on the sign of x"""
     if( x >= 0 ):
         return 1
     else:
@@ -609,9 +609,7 @@ def lookup(name, namespace):
 
 
 def pause():
-    """
-    Pauses the output stream awaiting user feedback.
-    """
+    """Pauses the output stream awaiting user feedback"""
     input("<Press enter/return to continue>")
 
 
