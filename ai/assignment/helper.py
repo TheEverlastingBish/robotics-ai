@@ -22,24 +22,21 @@ class COLOR(Enum):
 
     dark = ('gray11', 'white')
     light = ('white', 'black')
-    black = ('black', 'dim gray')
     red = ('red3', 'tomato')
-    cyan = ('cyan4', 'cyan4')
     green = ('green4', 'pale green')
     blue = ('DeepSkyBlue4', 'DeepSkyBlue2')
-    yellow = ('yellow2', 'yellow2')
 
 
 class agent:
-    '''
+    """
     The agents can be placed on the maze.
     They can represent the virtual object just to indcate the cell selected in Maze.
     Or they can be the physical agents (like robots)
     They can have two shapes (square or arrow)
-    '''
+    """
 
     def __init__(self, parentMaze, x=None, y=None, shape='square', goal=None, filled=False, footprints=True, color: COLOR = COLOR.blue):
-        '''
+        """
         parentmaze-->  The maze on which agent is placed.
 
         x,y-->  Position of the agent i.e. cell inside which agent will be placed
@@ -52,7 +49,7 @@ class agent:
         footprints-->   When the aganet will move to some other cell, its footprints
                         on the previous cell can be placed by making this True
         color-->    Color of the agent.
-        '''
+        """
 
         self._parentMaze = parentMaze
         self.color = color
@@ -330,64 +327,6 @@ class maze:
             else:
                 raise ValueError(f'{theme} is not a valid theme COLOR!')
 
-        # def blockedNeighbours(cell):
-        #     n = []
-        #     for d in self.maze_map[cell].keys():
-        #         if self.maze_map[cell][d] == 0:
-        #             if d == 'R' and (cell[0], cell[1] + 1) in self.grid:
-        #                 n.append((cell[0], cell[1] + 1))
-        #             elif d == 'L' and (cell[0], cell[1] - 1) in self.grid:
-        #                 n.append((cell[0], cell[1] - 1))
-        #             elif d == 'U' and (cell[0] - 1, cell[1]) in self.grid:
-        #                 n.append((cell[0] - 1, cell[1]))
-        #             elif d == 'D' and (cell[0] + 1, cell[1]) in self.grid:
-        #                 n.append((cell[0] + 1, cell[1]))
-        #     return n
-
-        # def removeWallinBetween(cell1, cell2):
-        #     """ To remove wall in between two cells """
-
-        #     if cell1[0] == cell2[0]:
-        #         if cell1[1] == cell2[1]+1:
-        #             self.maze_map[cell1]['R'] = 1
-        #             self.maze_map[cell2]['L'] = 1
-        #         else:
-        #             self.maze_map[cell1]['L'] = 1
-        #             self.maze_map[cell2]['R'] = 1
-        #     else:
-        #         if cell1[0] == cell2[0]+1:
-        #             self.maze_map[cell1]['U'] = 1
-        #             self.maze_map[cell2]['D'] = 1
-        #         else:
-        #             self.maze_map[cell1]['D'] = 1
-        #             self.maze_map[cell2]['U'] = 1
-
-        # def isCyclic(cell1, cell2):
-        #     '''
-        #     To avoid too much blank(clear) path.
-        #     '''
-        #     ans = False
-        #     if cell1[0] == cell2[0]:
-        #         if cell1[1] > cell2[1]:
-        #             cell1, cell2 = cell2, cell1
-        #         if self.maze_map[cell1]['D'] == 1 and self.maze_map[cell2]['D'] == 1:
-        #             if (cell1[0]+1, cell1[1]) in self.grid and self.maze_map[(cell1[0]+1, cell1[1])]['R'] == 1:
-        #                 ans = True
-        #         if self.maze_map[cell1]['U'] == 1 and self.maze_map[cell2]['U'] == 1:
-        #             if (cell1[0]-1, cell1[1]) in self.grid and self.maze_map[(cell1[0]-1, cell1[1])]['R'] == 1:
-        #                 ans = True
-        #     else:
-        #         if cell1[0] > cell2[0]:
-        #             cell1, cell2 = cell2, cell1
-        #         if self.maze_map[cell1]['R'] == 1 and self.maze_map[cell2]['R'] == 1:
-        #             if (cell1[0], cell1[1]+1) in self.grid and self.maze_map[(cell1[0], cell1[1]+1)]['D'] == 1:
-        #                 ans = True
-        #         if self.maze_map[cell1]['L'] == 1 and self.maze_map[cell2]['L'] == 1:
-        #             if (cell1[0], cell1[1]-1) in self.grid and self.maze_map[(cell1[0], cell1[1]-1)]['D'] == 1:
-        #                 ans = True
-        #     return ans
-
-
         def BFS(cell):
             """
             Breadth First Search: To generate the shortest path.
@@ -438,101 +377,32 @@ class maze:
                     return
             return fwdPath
         
-        # if maze is to be generated randomly
-        if not loadMaze:
-            _stack.append((x, y))
-            _closed.append((x, y))
-            biasLength = 2  # if pattern is 'v' or 'h'
-            if(pattern is not None and pattern.lower() == 'h'):
-                biasLength = max(self.cols//10, 2)
-            if(pattern is not None and pattern.lower() == 'v'):
-                biasLength = max(self.rows//10, 2)
-            bias = 0
+        # Load maze from CSV file
+        with open(loadMaze, 'r') as f:
+            last = list(f.readlines())[-1]
+            c = last.split(',')
+            c[0] = int(c[0].lstrip('"('))
+            c[1] = int(c[1].rstrip(')"'))
+            self.rows = c[0]
+            self.cols = c[1]
+            self.grid = []
 
-            while len(_stack) > 0:
-                cell = []
-                bias += 1
-                if(x, y + 1) not in _closed and (x, y+1) in self.grid:
-                    cell.append("R")
-                if (x, y-1) not in _closed and (x, y-1) in self.grid:
-                    cell.append("L")
-                if (x+1, y) not in _closed and (x+1, y) in self.grid:
-                    cell.append("D")
-                if (x-1, y) not in _closed and (x-1, y) in self.grid:
-                    cell.append("U")
-                if len(cell) > 0:
-                    if pattern is not None and pattern.lower() == 'h' and bias <= biasLength:
-                        if('L' in cell or 'R' in cell):
-                            if 'D' in cell:
-                                cell.remove('D')
-                            if 'U' in cell:
-                                cell.remove('U')
-                    elif pattern is not None and pattern.lower() == 'v' and bias <= biasLength:
-                        if('U' in cell or 'D' in cell):
-                            if 'L' in cell:
-                                cell.remove('L')
-                            if 'R' in cell:
-                                cell.remove('R')
-                    else:
-                        bias = 0
-                    current_cell = (random.choice(cell))
-                    if current_cell == "R":
-                        self._Open_Right(x, y)
-                        self.path[x, y+1] = x, y
-                        y = y + 1
-                        _closed.append((x, y))
-                        _stack.append((x, y))
+        with open(loadMaze, 'r') as f:
+            r = csv.reader(f)
+            next(r)
+            for i in r:
+                c = i[0].split(',')
+                c[0] = int(c[0].lstrip('('))
+                c[1] = int(c[1].rstrip(')'))
 
-                    elif current_cell == "L":
-                        self._Open_Left(x, y)
-                        self.path[x, y-1] = x, y
-                        y = y - 1
-                        _closed.append((x, y))
-                        _stack.append((x, y))
-
-                    elif current_cell == "U":
-                        self._Open_Up(x, y)
-                        self.path[(x-1, y)] = x, y
-                        x = x - 1
-                        _closed.append((x, y))
-                        _stack.append((x, y))
-
-                    elif current_cell == "D":
-                        self._Open_Down(x, y)
-                        self.path[(x+1, y)] = x, y
-                        x = x + 1
-                        _closed.append((x, y))
-                        _stack.append((x, y))
-
-                else:
-                    x, y = _stack.pop()
-
-        else:
-            # Load maze from CSV file
-            with open(loadMaze, 'r') as f:
-                last = list(f.readlines())[-1]
-                c = last.split(',')
-                c[0] = int(c[0].lstrip('"('))
-                c[1] = int(c[1].rstrip(')"'))
-                self.rows = c[0]
-                self.cols = c[1]
-                self.grid = []
-
-            with open(loadMaze, 'r') as f:
-                r = csv.reader(f)
-                next(r)
-                for i in r:
-                    c = i[0].split(',')
-                    c[0] = int(c[0].lstrip('('))
-                    c[1] = int(c[1].rstrip(')'))
-                    self.maze_map[tuple(c)] = {
-                        'L': int(i[1]), 
-                        'R': int(i[2]), 
-                        'U': int(i[3]), 
-                        'D': int(i[4])
-                    }
-            
-            self.path = BFS((self.rows, self.cols))
+                self.maze_map[tuple(c)] = {
+                    'L': int(i[1]), 
+                    'R': int(i[2]), 
+                    'U': int(i[3]), 
+                    'D': int(i[4])
+                }
+        
+        self.path = BFS((self.rows, self.cols))
         
         self._drawMaze(self.theme)
 
@@ -554,11 +424,9 @@ class maze:
 
 
     def _drawMaze(self, theme, blocked_colour='red'):
-        '''
-        Creation of Tkinter window and maze lines
-        '''
+        """ Creation of Tkinter window and maze lines """
 
-        self._LabWidth = 26  # Space from the top for Labels
+        self._LabWidth = 30  # Space from the top for Labels
         self._win = Tk()
         self._win.state('zoomed')
         self._win.title('Artificial Intelligence - Heuristic Search Assignment')
@@ -587,9 +455,9 @@ class maze:
             k = 2.5
         elif self.rows >= 22 and self.cols >= 22:
             k = 3
-        self._cell_width = round(min(((scr_height-self.rows-k*self._LabWidth) / (self.rows)), 
-                                ((scr_width-self.cols-k*self._LabWidth)/(self.cols)), 90), 
-                                3)
+        
+        self._cell_width = round(min(((scr_height-self.rows-k*self._LabWidth) / (self.rows)),
+                                     ((scr_width-self.cols-k*self._LabWidth) / (self.cols)), 90), 3)
 
         # Creating Maze lines
         if self._win is not None:
@@ -616,7 +484,7 @@ class maze:
                         l = self._canvas.create_line(
                             y, x + w, y + w, x + w, width=2, fill=theme.value[1], tag='line')
 
-        # Fill the blocked suqares in red
+        # Fill the blocked squares in red
         if self._win is not None:
             if self.grid is not None:
                 for cell in self.grid:
@@ -625,15 +493,20 @@ class maze:
                     x = x * w - w + self._LabWidth
                     y = y * w - w + self._LabWidth
 
-                    if (self.maze_map[cell]['L'] == False) and (self.maze_map[cell]['R'] == False) and (self.maze_map[cell]['U'] == False) and (self.maze_map[cell]['D'] == False):
-                        bb = self._canvas.create_rectangle(y, x, y + w, x + w, fill=blocked_colour, outline=theme.value[1], tag="fillblocked")
+                    if (self.maze_map[cell]['L'] == self.maze_map[cell]['R'] == self.maze_map[cell]['U'] == self.maze_map[cell]['D'] == False):
+                        bb = self._canvas.create_rectangle(
+                            y, x, y + w, x + w, 
+                            fill=blocked_colour, 
+                            outline=theme.value[1], 
+                            tag="fillblocked")
 
     def _redrawCell(self, x, y, theme):
-        '''
-        To redraw a cell.
+        """
+        To redraw a cell. Just for visualisation reasons.
         With Full sized square agent, it can overlap with maze lines
-        So the cell is redrawn so that cell lines are on top
-        '''
+        So the cell is redrawn so that cell lines are on top.
+
+        """
 
         w = self._cell_width
         cell = (x, y)
@@ -643,37 +516,16 @@ class maze:
 
         if self.maze_map[cell]['R'] == False:
             self._canvas.create_line(
-                y + w, x, y + w, x + w, width=2, fill='dim gray') # theme.value[1])
+                y + w, x, y + w, x + w, width=2, fill=theme.value[1])
         if self.maze_map[cell]['L'] == False:
             self._canvas.create_line(
-                y, x, y, x + w, width=2, fill='dim gray') # theme.value[1])
+                y, x, y, x + w, width=2, fill=theme.value[1])
         if self.maze_map[cell]['U'] == False:
             self._canvas.create_line(
-                y, x, y + w, x, width=2, fill='dim gray') # theme.value[1])
+                y, x, y + w, x, width=2, fill=theme.value[1])
         if self.maze_map[cell]['D'] == False:
             self._canvas.create_line(
-                y, x + w, y + w, x + w, width=2, fill='dim gray') # theme.value[1])
-
-
-    # def enableArrowKey(self, a):
-    #     '''
-    #     To control an agent a with Arrow Keys
-    #     '''
-    #     self._win.bind('<Left>', a.moveLeft)
-    #     self._win.bind('<Right>', a.moveRight)
-    #     self._win.bind('<Up>', a.moveUp)
-    #     self._win.bind('<Down>', a.moveDown)
-
-
-    # def enableWASD(self, a):
-    #     '''
-    #     To control an agent a with keys W,A,S,D
-    #     '''
-    #     self._win.bind('<a>', a.moveLeft)
-    #     self._win.bind('<d>', a.moveRight)
-    #     self._win.bind('<w>', a.moveUp)
-    #     self._win.bind('<s>', a.moveDown)
-
+                y, x + w, y + w, x + w, width=2, fill=theme.value[1])
 
     _tracePathList = []
 
@@ -876,23 +728,21 @@ class maze:
 
 
     def tracePath(self, d, kill=False, delay=500, showMarked=False):
-        '''
-        A method to trace path by agent
-        You can provide more than one agent/path details
-        '''
+        """ A method to trace path by agent """
 
         self._tracePathList.append((d, kill, delay))
+
         if maze._tracePathList[0][0] == d:
             sleep(1)
+
             for a, p in d.items():
+                print("Optiimal Path: ", list(p.values()))
                 if a.goal != (a.x, a.y) and len(p) != 0:
                     self._tracePathSingle(a, p, kill, showMarked, delay)
 
 
     def run(self):
-        '''
-        Finally to run the Tkinter Main Loop
-        '''
+        """ Finally to run the Tkinter Main Loop """
 
         self._win.mainloop()
 
