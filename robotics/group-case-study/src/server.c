@@ -6,8 +6,13 @@
  * Make sure there is dedicated power
  */
 
+#include <Arduino>
+#include <string>
+#include <bits/stdc++.h> 
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
+using namespace std; 
+
 
 const char *ssid = "CyberneticHandServerGroup1";
 const char *password = "Sw33tSurr3nd3r";
@@ -15,20 +20,13 @@ const char *password = "Sw33tSurr3nd3r";
 AsyncWebServer server(80); // Create an asynchronous web server on port
 
 // Button Pins
-const int buttonPin1 = 34;
-const int buttonPin2 = 35;
-const int buttonPin3 = 32;
-const int buttonPin4 = 33;
-const int buttonPin5 = 25;
-const int buttonPin6 = 26;
+const int ButtonPins[6] = { 34, 35, 32, 33, 25, 26 };
 
 // Button States
-int buttonState1 = 0;
-int buttonState2 = 0;
-int buttonState3 = 0;
-int buttonState4 = 0;
-int buttonState5 = 0;
-int buttonState6 = 0;
+int ButtonStates[6] = { };
+
+// const String htmlHeader = "<DOCTYPE html>\\n<html>\\n<head>\\n<title>Cybernetic Arm</title>\\n</head>\\n<body>\\n<h1>\\n";
+// const String htmlFooter = "</h1>\n</body>\n</html>";
 
 String countTest()
 {
@@ -37,112 +35,40 @@ String countTest()
     return count;
 }
 
-String buttonOne()
-{
-    buttonState1 = digitalRead(buttonPin1);
-    if (buttonState1 == HIGH)
 
+String cipherEncrypt(String response_text)
+{
+    char xorKey = 'D';
+    int len = strlen(response_text);
+
+    for (int i; i < len; i++)
     {
-        String confirm = "ON1";
-        Serial.println(confirm);
-        return String(confirm);
+        response_text[i] = response_text[i] ^ xorKey;
+    }
+
+    return response_text;
+}
+
+
+String buttonParse(String buttonName, int buttonState)
+{
+  String response;
+
+    if (buttonState == HIGH)
+    {
+        response = String("ON") + buttonName;
     }
     else
     {
-        String decline = "OFF1";
-        Serial.println(decline);
-        return String(decline);
+        response = String("OFF") + buttonName;
     }
+
+    response = cipherEncrypt(response);
+
+    Serial.println(response);
+    return String(response);
 }
 
-String buttonTwo()
-{
-    buttonState2 = digitalRead(buttonPin2);
-    if (buttonState2 == HIGH)
-    {
-        String confirm = "ON2";
-        Serial.println(confirm);
-        return String(confirm);
-    }
-    else
-    {
-        String decline = "OFF2";
-        Serial.println(decline);
-        return String(decline);
-    }
-}
-
-String buttonThree()
-{
-    buttonState3 = digitalRead(buttonPin3);
-    if (buttonState3 == HIGH)
-
-    {
-        String confirm = "ON3";
-        Serial.println(confirm);
-        return String(confirm);
-    }
-    else
-    {
-        String decline = "OFF3";
-        Serial.println(decline);
-        return String(decline);
-    }
-}
-
-String buttonFour()
-{
-    buttonState4 = digitalRead(buttonPin4);
-    if (buttonState4 == HIGH)
-
-    {
-        String confirm = "ON4";
-        Serial.println(confirm);
-        return String(confirm);
-    }
-    else
-    {
-        String decline = "OFF4";
-        Serial.println(decline);
-        return String(decline);
-    }
-}
-
-String buttonFive()
-{
-    buttonState5 = digitalRead(buttonPin5);
-    if (buttonState5 == HIGH)
-
-    {
-        String confirm = "ON5";
-        Serial.println(confirm);
-        return String(confirm);
-    }
-    else
-    {
-        String decline = "OFF5";
-        Serial.println(decline);
-        return String(decline);
-    }
-}
-
-String buttonSix()
-{
-    buttonState6 = digitalRead(buttonPin6);
-    if (buttonState6 == HIGH)
-
-    {
-        String confirm = "ON6";
-        Serial.println(confirm);
-        return String(confirm);
-    }
-    else
-    {
-        String decline = "OFF6";
-        Serial.println(decline);
-        return String(decline);
-    }
-}
 
 void setup()
 {
@@ -155,45 +81,44 @@ void setup()
 
     server.begin(); // Starts the server
 
+    int numButtons = sizeof(ButtonPins) / sizeof(int);
+
     // initialize the pushbutton pin as an input:
-    pinMode(buttonPin1, INPUT);
-    pinMode(buttonPin2, INPUT);
-    pinMode(buttonPin3, INPUT);
-    pinMode(buttonPin4, INPUT);
-    pinMode(buttonPin5, INPUT);
-    pinMode(buttonPin6, INPUT);
+    for (int i = 0; i < numButtons; i++)
+    {
+      pinMode(ButtonPins[i], INPUT);
+    }
 
     // All the different webpages
     server.on("/count", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send_P(200, "text/plain", countTest().c_str()); });
+          { request->send_P(200, "text/plain", countTest().c_str()); });
 
-    server.on("/buttonOne", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send_P(200, "text/plain", buttonOne().c_str()); });
+    for (int i=0; i < 6; i++)
+    {
+      String buttonContext = String("BT") + String(i);
+      String buttonEndpoint = String("/button") + String(i + 1);
+      // String htmlContent = htmlHeader + buttonParse(buttonContext, digitalRead(ButtonPins[i])) + htmlFooter;
+      // htmlHeader + buttonContext + htmlFooter;
 
-    server.on("/buttonTwo", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send_P(200, "text/plain", buttonTwo().c_str()); });
-
-    server.on("/buttonThree", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send_P(200, "text/plain", buttonThree().c_str()); });
-
-    server.on("/buttonFour", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send_P(200, "text/plain", buttonFour().c_str()); });
-
-    server.on("/buttonFive", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send_P(200, "text/plain", buttonFive().c_str()); });
-
-    server.on("/buttonSix", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send_P(200, "text/plain", buttonSix().c_str()); });
+      server.on(buttonContext.c_str(), HTTP_GET, [htmlContent](AsyncWebServerRequest *request)
+      { 
+        request->send_P(200, "text/plain", buttonParse(buttonContext, digitalRead(ButtonPins[i])).c_str());
+      });
+    }
 }
+
 
 void loop()
 {
-    countTest();
-    // buttonOne();
-    // buttonTwo();
-    // buttonThree();
-    // buttonFour();
-    // buttonFive();
-    // buttonSix();
-    // delay(500);
+    // countTest();
+
+    for (int i = 0; i < 6; i++)
+    {
+      String buttonContext = String("BT") + String(i + 1);
+      String buttonEndpoint = String("/button") + String(i + 1);
+
+      buttonParse(buttonContext, digitalRead(ButtonPins[i]));
+    }
+
+    delay(500);
 }
