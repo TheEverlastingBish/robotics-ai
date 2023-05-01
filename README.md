@@ -12,6 +12,8 @@
 
 ## 2022/23 SEM1 CT7158 Robotics Systems
 
+## 2022/23 SEM1 CS7064 Information Security
+
 <div style="font-size: 16pt; text-align: center; margin: auto; width: 500px;">
 Made with ❤️ by Bish Sinha
 </div>
